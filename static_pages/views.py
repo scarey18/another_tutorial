@@ -3,7 +3,13 @@ from django.http import request, HttpResponse
 
 
 def home(request):
-	return HttpResponse("This is the home page")
+	return render(request, 'static_pages/home.html', {'page_title': 'Home'})
 
 def help(request):
-	return HttpResponse("This is the help page")
+	return render(request, 'static_pages/help.html', {'page_title': 'Help'})
+
+def about(request):
+	return render(request, 'static_pages/about.html', {'page_title': 'About'})
+
+def contact(request):
+	return render(request, 'static_pages/contact.html', {'page_title': 'Contact'})
