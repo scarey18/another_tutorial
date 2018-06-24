@@ -3,7 +3,7 @@ from django.http import request, HttpResponse
 
 
 def home(request):
-	return render(request, 'static_pages/home.html', {'page_title': 'Home'})
+	return render(request, 'static_pages/home.html')
 
 def help(request):
 	return render(request, 'static_pages/help.html', {'page_title': 'Help'})

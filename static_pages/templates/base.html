@@ -1,5 +1,9 @@
 <head>
+	{% if page_title %}
     <title>{{ page_title }} | Ruby on Rails Tutorial Sample App</title>
+	{% else %}
+	<title>Ruby on Rails Tutorial Sample App</title>
+	{% endif %}
 </head>
 <body>
     {% block content %}{% endblock %}
