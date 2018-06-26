@@ -13,3 +13,6 @@ def about(request):
 
 def contact(request):
 	return render(request, 'static_pages/contact.html', {'page_title': 'Contact'})
+
+def signup(request):
+	return render(request, 'static_pages/signup.html', {'page_title': 'Sign up'})
