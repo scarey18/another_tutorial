@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 	{% load static %}
-	<link rel="stylesheet" type="text/css" href="{% static 'static_pages/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'static_pages/style.scss' %}">
 
 	<!--[if lt IE 9]>
   		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
@@ -15,9 +15,9 @@
 	<![endif]-->
 </head>
 <body>
-    <header class="navbar navbar-fixed-top navbar-inverse">
+    <header class="navbar navbar-fixed-top navbar-dark bg-dark">
       	<div class="container">
-        	<a href="#" id="logo">Sample app</a>
+        	<a href="#" id="logo" class="navbar-brand">Sample app</a>
         	<nav>
           		<ul class="nav navbar-nav navbar-right">
             		<li><a href="{% url 'static_pages:home' %}">Home</a></li>
@@ -27,9 +27,23 @@
         	</nav>
       	</div>
     </header>
-    <div class="container">
+    <div class="container content">
       	{% block content %}{% endblock %}
     </div>
+
+    <footer class="footer">
+		<small>
+	    	The <a href="http://www.railstutorial.org/">Ruby on Rails Tutorial</a>
+	   		by <a href="http://www.michaelhartl.com/">Michael Hartl</a>
+	  	</small>
+	  	<nav>
+	    	<ul>
+	      		<li><a href="{% url 'static_pages:about' %}">About</a></li>
+	      		<li><a href="{% url 'static_pages:contact' %}">Contact</a></li>
+	      		<li><a href="http://news.railstutorial.org/">News</a></li>
+	    	</ul>
+	  	</nav>
+	</footer>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
