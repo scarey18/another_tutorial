@@ -1,5 +1,14 @@
 from django.shortcuts import render
 from django.http import request, HttpResponse
+from django.views.generic import DetailView
+
+from .models import User
+
+
+class UserProfile(DetailView):
+	model = User
+	template_name = 'static_pages/profile.html'
+	fields = ['username', 'email']
 
 
 def home(request):
