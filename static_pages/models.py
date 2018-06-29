@@ -15,7 +15,7 @@ class User(AbstractUser):
         self.full_clean()
         return super(User, self).save(*args, **kwargs)
 
-    def gravatar(self, size=40):
+    def gravatar(self, size=60):
         digest = hashlib.md5(self.email.encode()).hexdigest()
         url = f'http://www.gravatar.com/avatar/{digest}'
-        return mark_safe(f'<img src="{url}" height="{size}" width="{size}">')
+        return mark_safe(f'<img src="{url}" height="{size}" width="{size}" class="gravatar">')

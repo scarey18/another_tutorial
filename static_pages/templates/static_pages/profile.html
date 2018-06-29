@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ user.username }}</h1>
-{{ user.gravatar }}
-<p>Email: {{ user.email }}</p>
-<p>Date joined: {{ user.date_joined|date:"F d, Y"}}</p>
-<p>Last login: {{ user.last_login }}</p>
+<div class="row">
+	<aside class="col-md-4">
+		<section class="user_info">
+			<h1>
+				{{ user.gravatar }}
+				{{ user.username }}
+			</h1>
+			<p>Email: {{ user.email }}</p>
+			<p>Date joined: {{ user.date_joined|date:"F d, Y"}}</p>
+			<p>Last login: {{ user.last_login }}</p>
+		</section>
+	</aside>
+</div>
 {% endblock %}
