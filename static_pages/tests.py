@@ -15,10 +15,11 @@ class SignupViewTests(TestCase):
 			'password': 'asdlfksjadlk23',
 			'confirm_password': 'asdlfksjadlk23',
 		}
-		response = self.client.post('/signup', data)
+		response = self.client.post('/signup', data, follow=True)
 		new_user = User.objects.get(username='validuser2')
 		expected_url = reverse('static_pages:profile', args=(new_user.pk,))
 		self.assertRedirects(response, expected_url, target_status_code=200)
+		self.assertContains(response, f'Welcome to the Sample App, {new_user.username}!')
 
 	def test_password_fields_dont_match(self):
 		data = {
