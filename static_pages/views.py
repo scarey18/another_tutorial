@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import DetailView
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 
 from .models import User
 from .utils import parse_error
@@ -47,7 +48,8 @@ def signup(request):
 		except ValidationError as e:
 			context['error'] = parse_error(e)
 			return render(request, 'static_pages/signup.html', context)
-
-		return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
+		else:
+			messages.success(request, f"Welcome to the Sample App, {user.username}!")
+			return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
 
 	return render(request, 'static_pages/signup.html', {'page_title': 'Sign up'})
