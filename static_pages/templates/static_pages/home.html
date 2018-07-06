@@ -10,7 +10,9 @@
     	sample application.
   	</h2>
 
+  	{% if not user %}
   	<a href="{% url 'static_pages:signup' %}" class="btn btn-lg btn-primary">Sign up now!</a>
+  	{% endif %}
 </div>
 
 <a href="https://www.djangoproject.com/" target="_blank">

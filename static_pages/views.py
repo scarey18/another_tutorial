@@ -62,7 +62,7 @@ def login(request):
 
 		if user is not None:
 			auth.login(request, user)
-			return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+			return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
 		else:
 			messages.error(request, "Invalid username/password combination.")
 			context['username'] = username
