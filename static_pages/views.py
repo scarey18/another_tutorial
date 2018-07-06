@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ValidationError
-from django.contrib import messages
+from django.contrib import messages, auth
 
 from .models import User
 from .utils import parse_error
@@ -28,16 +28,14 @@ def contact(request):
 	return render(request, 'static_pages/contact.html', {'page_title': 'Contact'})
 
 def signup(request):
+	context = {'page_title': 'Sign up'}
+
 	if request.method == "POST":
 		username = request.POST['username']
 		email = request.POST['email']
 		password = request.POST['password']
 		confirmation = request.POST['confirm_password']
-		context = {
-			'page_title': 'Sign up',
-			'username': username,
-			'email': email,
-		}
+		context['username'], context['email'] = username, email
 
 		if confirmation != password:
 			context['error'] = 'Make sure both password fields match.'
@@ -52,4 +50,22 @@ def signup(request):
 			messages.success(request, f"Welcome to the Sample App, {user.username}!")
 			return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
 
-	return render(request, 'static_pages/signup.html', {'page_title': 'Sign up'})
+	return render(request, 'static_pages/signup.html', context)
+
+def login(request):
+	context = {'page_title': 'Log in'}
+
+	if request.method == 'POST':
+		username = request.POST['username']
+		password = request.POST['password']
+		user = auth.authenticate(request, username=username, password=password)
+
+		if user is not None:
+			auth.login(request, user)
+			return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+		else:
+			messages.error(request, "Invalid username/password combination.")
+			context['username'] = username
+			return render(request, 'static_pages/login.html', context)
+
+	return render(request, 'static_pages/login.html', context)
