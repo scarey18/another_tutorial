@@ -9,6 +9,7 @@
 
 		<form method="post" action="{% url 'static_pages:login' %}">
 		{% csrf_token %}
+			<input type="hidden" name="next" value="{{next_url}}">
 			<p>
 				<label for="username">Username:</label>
 				<input type="text" name="username" value="{{username}}" class="form-control" required>

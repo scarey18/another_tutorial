@@ -4,12 +4,14 @@ from django.views.generic import DetailView
 from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ValidationError
 from django.contrib import messages, auth
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from .models import User
 from .utils import parse_error
 
 
-class UserProfile(DetailView):
+class UserProfile(LoginRequiredMixin, DetailView):
 	model = User
 	template_name = 'static_pages/profile.html'
 	fields = ['username', 'email']
@@ -47,6 +49,7 @@ def signup(request):
 			context['error'] = parse_error(e)
 			return render(request, 'static_pages/signup.html', context)
 		else:
+			auth.login(request, user)
 			messages.success(request, f"Welcome to the Sample App, {user.username}!")
 			return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
 
@@ -55,17 +58,27 @@ def signup(request):
 def login(request):
 	context = {'page_title': 'Log in'}
 
-	if request.method == 'POST':
+	if request.method == 'GET':
+		context['next_url'] = request.GET.get('next', '')
+		return render(request, 'static_pages/login.html', context)
+
+	elif request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
+		next_url = request.POST['next']
 		user = auth.authenticate(request, username=username, password=password)
 
 		if user is not None:
 			auth.login(request, user)
-			return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
+			if next_url:
+				return HttpResponseRedirect(next_url)
+			else:
+				return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
 		else:
 			messages.error(request, "Invalid username/password combination.")
-			context['username'] = username
+			context['username'], context['next_url'] = username, next_url
 			return render(request, 'static_pages/login.html', context)
 
-	return render(request, 'static_pages/login.html', context)
+def logout(request):
+	auth.logout(request)
+	return HttpResponseRedirect(reverse_lazy('static_pages:home'))
