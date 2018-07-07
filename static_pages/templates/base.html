@@ -44,15 +44,12 @@
             		</li>
             		{% else %}
             		<li><a href="{% url 'static_pages:login' %}">Log in</a></li>
-            		{% endif %}
-                    
+            		{% endif %}                    
           		</ul>
         	</nav>
       	</div>
     </header>
-    <div class="container content">
-      	{% block content %}{% endblock %}
-    </div>
+    <div class="container content">{% block content %}{% endblock %}</div>
 
     <footer class="footer">
 		<small>

@@ -9,7 +9,7 @@
 
 		<form method="post" action="{% url 'static_pages:login' %}">
 		{% csrf_token %}
-			<input type="hidden" name="next" value="{{next_url}}">
+			<input type="hidden" name="next_url" value="{{next_url}}">
 			<p>
 				<label for="username">Username:</label>
 				<input type="text" name="username" value="{{username}}" class="form-control" required>
@@ -17,6 +17,12 @@
 			<p>
 				<label for="password">Password:</label>
 				<input type="password" name="password" class="form-control" required>
+			</p>
+			<p>
+				<label for="remember_me" class="checkbox inline">
+					<input type="checkbox" name="remember_me" id="session_remember_me">
+					<span>Remember me on this computer</span>
+				</label>
 			</p>
 			<button type="submit" class="btn btn-primary">Log in</button>
 		</form>

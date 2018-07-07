@@ -65,11 +65,14 @@ def login(request):
 	elif request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
-		next_url = request.POST['next']
+		next_url = request.POST['next_url']
+		remember_me = request.POST.get('remember_me', False)
 		user = auth.authenticate(request, username=username, password=password)
 
 		if user is not None:
 			auth.login(request, user)
+			if remember_me is False:
+				request.session.set_expiry(0)
 			if next_url:
 				return HttpResponseRedirect(next_url)
 			else:
