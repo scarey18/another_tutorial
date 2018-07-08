@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Update your profile</h1>
+{% include 'user_form.html' %}
+
+<div class="gravatar_edit">
+	{{ user.gravatar }}
+	<a href="http://gravatar.com/emails" target="_blank">change</a>
+</div>
+
+{% endblock %}
