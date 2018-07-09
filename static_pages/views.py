@@ -2,15 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, CreateView
 from django.urls import reverse, reverse_lazy
-from django.core.exceptions import ValidationError
 from django.contrib import messages, auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 
 from .models import User
-from .utils import parse_error
-from .forms import UserForm
+from .forms import UserCreateForm
 
 class UserProfile(LoginRequiredMixin, DetailView):
 	model = User
@@ -26,7 +24,7 @@ class UserProfile(LoginRequiredMixin, DetailView):
 class SignupView(CreateView):
 	model = User
 	template_name = 'static_pages/signup.html'
-	form_class = UserForm
+	form_class = UserCreateForm
 
 	def form_valid(self, form):
 		new_user = form.save()
@@ -56,8 +54,8 @@ class LoginView(LoginView):
 		if self.request.POST.get('remember_me', False) is False:
 			self.request.session.set_expiry(0)
 
-		return HttpResponseRedirect(next_url) if next_url else\
-			HttpResponseRedirect(reverse_lazy('static_pages:home'))
+		return HttpResponseRedirect(next_url) if next_url\
+			else HttpResponseRedirect(reverse_lazy('static_pages:home'))
 
 
 def home(request):

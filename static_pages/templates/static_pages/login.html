@@ -3,10 +3,6 @@
 {% block content %}
 <div class="row">
 	<div class="col-md-6 col-md-offset-3">
-		{% for message in messages %}
-		<p class="alert alert-danger">{{ message }}</p>
-		{% endfor %}
-
 		<form method="post" action="{% url 'static_pages:login' %}">
 		{% csrf_token %}
 			{{ form.as_p }}
