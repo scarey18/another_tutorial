@@ -12,11 +12,15 @@ from .models import User
 from .utils import parse_error
 from .forms import UserForm
 
-
 class UserProfile(LoginRequiredMixin, DetailView):
 	model = User
 	template_name = 'static_pages/profile.html'
 	fields = ['username', 'email']
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['page_title'] = context['user'].username
+		return context
 
 
 class SignupView(CreateView):
@@ -27,11 +31,12 @@ class SignupView(CreateView):
 	def form_valid(self, form):
 		new_user = form.save()
 		auth.login(self.request, new_user)
+		self.request.session.set_expiry(0)
 		messages.success(
 			self.request,
 			f"Welcome to the Sample App, {new_user.username}!"
 		)
-		return super().form_valid(form)
+		return HttpResponseRedirect(new_user.get_absolute_url())
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
