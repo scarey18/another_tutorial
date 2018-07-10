@@ -35,7 +35,9 @@
             						Profile
             					</a>
             				</li>
-            				<li><a href="#">Settings</a></li>
+            				<li>
+                                <a href="{% url 'static_pages:edit_user' user.pk %}">Settings</a>
+                            </li>
             				<li class="divider"></li>
             				<li>
             					<a href="{% url 'static_pages:logout' %}">Log out</a>

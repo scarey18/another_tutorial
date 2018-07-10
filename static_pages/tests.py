@@ -6,14 +6,16 @@ from django.contrib.auth.models import AnonymousUser
 from .models import User
 
 
-def new_user():
+def new_user(username='test'):
 	return User.objects.create_user(
-		username='test',
+		username=username,
 		email='test@testing.com',
 		password='something2018'
 	)
 
+
 ##### VIEW TESTS #####
+
 
 class UserProfileTests(TestCase):
 	def test_user_profile_logged_in(self):
@@ -50,6 +52,58 @@ class SignupViewTests(TestCase):
 		self.assertEqual(resp.context['page_title'], 'test')
 		self.assertContains(resp, 'Welcome to the Sample App, test!')
 		self.assertEqual(user.username, 'test')
+
+
+class EditUserTests(TestCase):
+	def test_edit_user_view(self):
+		user = new_user()
+		self.client.login(username='test', password='something2018')
+		resp = self.client.get(reverse('static_pages:edit_user', args=(user.pk,)))
+		self.assertEqual(resp.status_code, 200)
+		self.assertEqual(resp.context['page_title'], 'Edit')
+
+	def test_edit_user_not_logged_in(self):
+		user = new_user()
+		resp = self.client.get(reverse('static_pages:edit_user', args=(user.pk,)))
+		self.assertEqual(resp.status_code, 302)
+		self.assertEqual(resp['Location'], '/login?next=/users/1/edit')
+
+	def test_edit_user_get_with_wrong_user(self):
+		user1 = new_user('test1')
+		user2 = new_user('test2')
+		self.client.login(username='test1', password='something2018')
+		resp = self.client.get(reverse('static_pages:edit_user', args=(user2.pk,)))
+		self.assertEqual(resp.status_code, 302)
+		self.assertEqual(resp['Location'], reverse('static_pages:profile', args=(user1.pk,)))
+
+	def test_edit_user_post_with_wrong_user(self):
+		user1 = new_user('test1')
+		user2 = new_user('test2')
+		data = {
+			'username': 'new_name',
+			'email': 'new_email@nah.com',
+			'password1': 'newsomething18',
+			'password2': 'newsomething18'
+		}
+		self.client.login(username='test1', password='something2018')
+		resp = self.client.post(reverse('static_pages:edit_user', args=(user2.pk,)), data)
+		self.assertEqual(resp.status_code, 404)
+		user2 = User.objects.get(pk=2)
+		self.assertEqual(user2.username, 'test2')
+
+	def test_edit_user_form_valid(self):
+		user = new_user()
+		self.client.login(username='test', password='something2018')
+		data = {
+			'username': 'new_name',
+			'email': 'test@testing.com',
+			'password1': 'something2018',
+			'password2': 'something2018'
+		}
+		resp = self.client.post(reverse('static_pages:edit_user', args=(user.pk,)), data, follow=True)
+		self.assertEqual(resp.status_code, 200)
+		self.assertEqual(resp.context['page_title'], 'new_name')
+		self.assertContains(resp, "Profile successfully updated!")
 
 
 class LoginViewTests(TestCase):
@@ -110,7 +164,9 @@ class LogoutViewTests(TestCase):
 		self.assertEqual(resp.url, '/')
 		self.assertIsInstance(auth.get_user(self.client), AnonymousUser)
 
+
 ##### MODEL TESTS #####
+
 
 class UserModelTests(TestCase):
 	def test_user_gravatar_method(self):
@@ -122,7 +178,9 @@ class UserModelTests(TestCase):
 		user = new_user()
 		self.assertEqual(user.get_absolute_url(), '/users/1')
 
+
 ##### FORM TESTS #####
+
 
 class UserCreateFormTests(TestCase):
 	pass
