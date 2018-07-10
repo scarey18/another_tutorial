@@ -60,7 +60,7 @@ class LoginViewTests(TestCase):
 
 	def test_login_form_valid(self):
 		user = new_user()
-		data = {'username': 'test', 'password': 'something2018', 'remember_me': 'on'}
+		data = {'username': 'test', 'password': 'something2018'}
 		resp = self.client.post(reverse_lazy('static_pages:login'), data)
 		self.assertEqual(resp.status_code, 302)
 		self.assertEqual(resp.url, '/')
@@ -109,3 +109,20 @@ class LogoutViewTests(TestCase):
 		self.assertEqual(resp.status_code, 302)
 		self.assertEqual(resp.url, '/')
 		self.assertIsInstance(auth.get_user(self.client), AnonymousUser)
+
+##### MODEL TESTS #####
+
+class UserModelTests(TestCase):
+	def test_user_gravatar_method(self):
+		user = new_user()
+		gravatar_img_tag = '<img src="http://www.gravatar.com/avatar/eca74378f20815070e1bec3ee81bfabc" height="60" width="60" class="gravatar">'
+		self.assertEqual(user.gravatar(), gravatar_img_tag)
+
+	def test_user_get_absolute_url(self):
+		user = new_user()
+		self.assertEqual(user.get_absolute_url(), '/users/1')
+
+##### FORM TESTS #####
+
+class UserCreateFormTests(TestCase):
+	pass
