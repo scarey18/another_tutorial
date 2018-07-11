@@ -95,6 +95,7 @@ class LoginView(LoginView):
 class IndexView(LoginRequiredMixin, ListView):
     template_name = 'static_pages/index.html'
     model = User
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
