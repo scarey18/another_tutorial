@@ -4,16 +4,13 @@
 <div class="row">
 	<aside class="col-md-4">
 		<section class="user_info">
-			{% for message in messages %}
-			<p class="alert alert-{{ message.tags }}">{{ message }}</p>
-			{% endfor %}
 			<h1>
-				{{ user.gravatar }}
-				{{ user.username }}
+				{{ u.gravatar }}
+				{{ u.username }}
 			</h1>
-			<p>Email: {{ user.email }}</p>
-			<p>Date joined: {{ user.date_joined|date:"F d, Y" }}</p>
-			<p>Last login: {{ user.last_login }}</p>
+			<p>Email: {{ u.email }}</p>
+			<p>Date joined: {{ u.date_joined|date:"F d, Y" }}</p>
+			<p>Last login: {{ u.last_login }}</p>
 		</section>
 	</aside>
 </div>

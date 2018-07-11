@@ -10,16 +10,23 @@ from django.contrib.auth.models import AnonymousUser
 
 from .models import User
 from .forms import UserCreateForm
+from .utils import active_users
 
 class UserProfile(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'static_pages/profile.html'
     fields = ['username', 'email']
 
+    def get_context_object_name(self, obj):
+        return 'u'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = context['user'].username
+        context['page_title'] = self.object.username
         return context
+
+    def get_queryset(self):
+        return active_users()
 
 
 class SignupView(CreateView):
@@ -75,6 +82,9 @@ class EditUser(LoginRequiredMixin, UpdateView):
         context['page_title'] = 'Edit'
         return context
 
+    def get_queryset(self):
+        return active_users()
+
 
 class LoginView(LoginView):
     template_name = 'static_pages/login.html'
@@ -102,6 +112,9 @@ class IndexView(LoginRequiredMixin, ListView):
         context['page_title'] = 'Users'
         return context
 
+    def get_queryset(self):
+        return active_users()
+
 
 def home(request):
     return render(request, 'static_pages/home.html')
@@ -115,6 +128,19 @@ def about(request):
 def contact(request):
     return render(request, 'static_pages/contact.html', {'page_title': 'Contact'})
 
+@login_required
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+
+@login_required
+def deactivate(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if not auth.get_user(request).is_superuser:
+        raise Http404
+    else:
+        user.is_active = False
+        user.save()
+        messages.success(request, "User successfully deactivated.")
+        return HttpResponseRedirect(reverse_lazy('static_pages:index'))
