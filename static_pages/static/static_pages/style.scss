@@ -187,3 +187,16 @@ alert-success {
 .dropdown-menu {
   background-color: #212529;
 }
+
+/* Users index */
+
+.users {
+  list-style: none;
+  margin: 0;
+}
+
+.users li {
+    overflow: auto;
+    padding: 10px 0;
+    border-bottom: 1px solid gray;
+  }

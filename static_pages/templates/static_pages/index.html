@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>All users</h1>
+
+<ul class="users">
+	{% for user in user_list %}
+	<li>
+		{{ user.index_gravatar }}
+		<a href="{% url 'static_pages:profile' user.pk %}">{{ user.username }}</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

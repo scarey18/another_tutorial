@@ -12,5 +12,8 @@ class User(AbstractUser):
         url = f'http://www.gravatar.com/avatar/{digest}'
         return mark_safe(f'<img src="{url}" height="{size}" width="{size}" class="gravatar">')
 
+    def index_gravatar(self):
+    	return self.gravatar(50)
+
     def get_absolute_url(self):
         return reverse('static_pages:profile', args=(self.pk,))

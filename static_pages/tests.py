@@ -128,6 +128,17 @@ class LoginViewTests(TestCase):
 		self.assertEqual(resp.url, '/users/1')
 
 
+class IndexViewTests(TestCase):
+	def test_index_view(self):
+		for i in range(1, 11):
+			new_user('test' + str(i))
+		self.client.login(username='test1', password='something2018')
+		resp = self.client.get(reverse_lazy('static_pages:index'))
+		self.assertEqual(resp.status_code, 200)
+		self.assertEqual(resp.context['page_title'], 'Users')
+		self.assertEqual(len(resp.context['user_list']), 10)
+
+
 class HomeViewTests(TestCase):
 	def test_home_view(self):
 		resp = self.client.get(reverse_lazy('static_pages:home'))
