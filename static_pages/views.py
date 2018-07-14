@@ -2,15 +2,19 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import DetailView, CreateView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib import messages, auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.models import AnonymousUser
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 from .models import User
 from .forms import UserCreateForm
 from .utils import active_users
+
 
 class UserProfile(LoginRequiredMixin, DetailView):
     model = User
@@ -36,11 +40,12 @@ class SignupView(CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        auth.login(self.request, new_user)
-        self.request.session.set_expiry(0)
-        message = f"Welcome to the Sample App, {new_user.username}!"
-        messages.success(self.request, message)
-        return HttpResponseRedirect(new_user.get_absolute_url())
+        pk64 = urlsafe_base64_encode(force_bytes(new_user.pk)).decode()
+        activation_url = f'http://192.168.9.3:8000/activate?pk={pk64}'
+        context = {'username': new_user.username, 'url': activation_url}
+        email_body = render_to_string('static_pages/activation_email.html', context)
+        EmailMessage('Account activation', email_body, to=[new_user.email]).send()
+        return HttpResponseRedirect('activate')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,9 +69,8 @@ class EditUser(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        current_user = auth.get_user(request)
 
-        if current_user != self.object:
+        if auth.get_user(request) != self.object:
             raise Http404
         else:
             return super().post(request, *args, **kwargs)
@@ -93,11 +97,11 @@ class LoginView(LoginView):
     def form_valid(self, form):
         user = form.get_user()
         auth.login(self.request, user)
+        next_url = self.request.POST.get('next', '')
 
         if self.request.POST.get('remember_me', False) is False:
             self.request.session.set_expiry(0)
 
-        next_url = self.request.POST.get('next', '')
         return HttpResponseRedirect(next_url) if next_url\
             else HttpResponseRedirect(reverse_lazy('static_pages:home'))
 
@@ -144,3 +148,17 @@ def deactivate(request, pk):
         user.save()
         messages.success(request, "User successfully deactivated.")
         return HttpResponseRedirect(reverse_lazy('static_pages:index'))
+
+def activate(request):
+    pk64 = request.GET.get('pk', '')
+
+    if pk64:
+        pk = int(urlsafe_base64_decode(pk64).decode())
+        user = get_object_or_404(User, pk=pk)
+        user.is_active = True
+        user.save()
+        auth.login(request, user)
+        messages.success(request, f"Welcome to the Sample App, {user.username}!")
+        return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
+    else:
+        return render(request, 'static_pages/activate.html', {'page_title': 'Activate'})

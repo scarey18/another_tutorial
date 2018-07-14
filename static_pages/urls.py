@@ -18,4 +18,5 @@ urlpatterns = [
 	path('users/<int:pk>/deactivate', views.deactivate, name='deactivate'),
 	path('login', views.LoginView.as_view(), name='login'),
 	path('logout', views.logout, name='logout'),
+	path('activate', views.activate, name='activate'),
 ]
