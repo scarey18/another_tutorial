@@ -8,6 +8,7 @@ import hashlib
 
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
+    digest = models.SlugField()
 
     REQUIRED_FIELDS = ['email']
 

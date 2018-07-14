@@ -2,14 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import DetailView, CreateView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib import messages, auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+
+import hashlib
 
 from .models import User
 from .forms import UserCreateForm
@@ -40,8 +40,10 @@ class SignupView(CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        pk64 = urlsafe_base64_encode(force_bytes(new_user.pk)).decode()
-        activation_url = f'http://192.168.9.3:8000/activate?pk={pk64}'
+        digest = hashlib.md5(str(new_user.pk).encode()).hexdigest()
+        new_user.digest = digest
+        new_user.save()
+        activation_url = f'http://192.168.9.3:8000/activate?pk={digest}'
         context = {'username': new_user.username, 'url': activation_url}
         email_body = render_to_string('static_pages/activation_email.html', context)
         EmailMessage('Account activation', email_body, to=[new_user.email]).send()
@@ -150,15 +152,18 @@ def deactivate(request, pk):
         return HttpResponseRedirect(reverse_lazy('static_pages:index'))
 
 def activate(request):
-    pk64 = request.GET.get('pk', '')
+    digest = request.GET.get('pk', '')
 
-    if pk64:
-        pk = int(urlsafe_base64_decode(pk64).decode())
-        user = get_object_or_404(User, pk=pk)
+    if digest:
+        user = get_object_or_404(User, digest=digest)
+
+        if user.is_active:
+            return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+
         user.is_active = True
         user.save()
-        auth.login(request, user)
-        messages.success(request, f"Welcome to the Sample App, {user.username}!")
+        messages.success(request, f"Your account has been successfully activated, {user.username}! Log in to continue.")
         return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
+
     else:
         return render(request, 'static_pages/activate.html', {'page_title': 'Activate'})
