@@ -8,7 +8,7 @@ import hashlib
 
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
-    digest = models.SlugField()
+    activation_id = models.SlugField(null=True, blank=True, default=None)
 
     REQUIRED_FIELDS = ['email']
 
