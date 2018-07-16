@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
 
 from .models import User
-from .forms import UserCreateForm
+from .forms import UserCreateForm, UserUpdateForm
 from .utils import active_users
 
 
@@ -57,7 +57,7 @@ class SignupView(CreateView):
 class EditUser(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'static_pages/edit_user.html'
-    form_class = UserCreateForm
+    form_class = UserUpdateForm
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -136,12 +136,13 @@ class PasswordResetDone(PasswordResetView):
 
 class PasswordResetConfirm(PasswordResetConfirmView):
     template_name = 'static_pages/password_reset_confirm.html'
-    success_url = reverse_lazy('static_pages:login')
     extra_context = {'page_title': 'Change password'}
 
     def form_valid(self, form):
+        user = form.save()
+        auth.logout(self.request)
         messages.success(self.request, "Your password has been reset. Please login with the new password to continue.")
-        return super().form_valid(form)
+        return HttpResponseRedirect(reverse_lazy('static_pages:login'))
 
 
 def home(request):

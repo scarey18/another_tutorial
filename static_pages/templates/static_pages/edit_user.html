@@ -9,6 +9,9 @@
 		<form method="post" action="{% url 'static_pages:edit_user' user.pk %}">
 		{% csrf_token %}
 			{{ form.as_p }}
+			<p>
+				<a href="{% url 'static_pages:password_reset' %}">Change password</a>
+			</p>
 			<button type="submit" class="btn btn-primary">Save changes</button>
 		</form>
 	</div>
