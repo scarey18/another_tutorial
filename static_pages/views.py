@@ -139,7 +139,7 @@ class PasswordResetConfirm(PasswordResetConfirmView):
     extra_context = {'page_title': 'Change password'}
 
     def form_valid(self, form):
-        user = form.save()
+        form.save()
         auth.logout(self.request)
         messages.success(self.request, "Your password has been reset. Please login with the new password to continue.")
         return HttpResponseRedirect(reverse_lazy('static_pages:login'))
