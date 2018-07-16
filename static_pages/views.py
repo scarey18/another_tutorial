@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import messages, auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
@@ -119,6 +119,29 @@ class IndexView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return active_users()
+
+
+class PasswordReset(PasswordResetView):
+    template_name = 'static_pages/password_reset.html'
+    success_url = reverse_lazy('static_pages:password_reset_done')
+    extra_context = {'page_title': 'Password reset'}
+    email_template_name = 'static_pages/password_reset_email.html'
+    subject_template_name = 'static_pages/password_reset_subject.txt'
+
+
+class PasswordResetDone(PasswordResetView):
+    template_name = 'static_pages/password_reset_done.html'
+    extra_context = {'page_title': 'Email sent'}
+
+
+class PasswordResetConfirm(PasswordResetConfirmView):
+    template_name = 'static_pages/password_reset_confirm.html'
+    success_url = reverse_lazy('static_pages:login')
+    extra_context = {'page_title': 'Change password'}
+
+    def form_valid(self, form):
+        messages.success(self.request, "Your password has been reset. Please login with the new password to continue.")
+        return super().form_valid(form)
 
 
 def home(request):

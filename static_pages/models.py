@@ -9,7 +9,6 @@ import hashlib
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
     activation_id = models.SlugField(null=True, blank=True, default=None)
-    password_change_id = models.SlugField(null=True, blank=True, default=None)
 
     REQUIRED_FIELDS = ['email']
 
