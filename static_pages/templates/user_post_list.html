@@ -1,0 +1,31 @@
+<ol class="microposts">
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% for p in page_obj.object_list %}
+    <li id="micropost-{{p.pk}}">
+        {{ p.user.index_gravatar }}
+        <span class="user">
+            <a href="{% url 'static_pages:profile' p.user.pk %}">
+                {{ p.user.username }}
+            </a>
+        </span>
+        <span class="content">{{ p.content }}</span>
+        {% load humanize %}
+        <span class="timestamp">Posted {{ p.created_at|naturaltime }} ago.</span>
+    </li>
+    {% endfor %}   
+</ol>

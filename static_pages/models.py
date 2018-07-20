@@ -27,6 +27,9 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse('static_pages:profile', args=(self.pk,))
 
+    def microposts(self):
+        return self.micropost_set.all().order_by('-created_at')
+
 
 class Micropost(models.Model):
     content = models.TextField(max_length=140)
@@ -36,8 +39,9 @@ class Micropost(models.Model):
 
     def __str__(self):
         content = self.content.split(' ')
-        return ' '.join(content[:10]) + '...' if len(content) > 10\
+        abbrv = ' '.join(content[:5]) + '...' if len(content) > 5\
             else ' '.join(content)
+        return abbrv if len(abbrv) < 40 else abbrv[:40]
 
     def save(self, *args, **kwargs):
         if not self.pk:

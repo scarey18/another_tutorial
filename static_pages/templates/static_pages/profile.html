@@ -2,16 +2,21 @@
 
 {% block content %}
 <div class="row">
-	<aside class="col-md-4">
-		<section class="user_info">
-			<h1>
-				{{ u.gravatar }}
-				{{ u.username }}
-			</h1>
-			<p>Email: {{ u.email }}</p>
-			<p>Date joined: {{ u.date_joined|date:"F d, Y" }}</p>
-			<p>Last login: {{ u.last_login }}</p>
-		</section>
-	</aside>
+    <aside class="col-md-4">
+        <section class="user_info">
+            <h1>
+                {{ u.gravatar }}
+                {{ u.username }}
+            </h1>
+            <p>Date joined: {{ u.date_joined }}</p>
+        </section>
+    </aside>
+    <div class="col-md-8">
+        {% if posts %}
+        <h3>Microposts ({{ posts.count }})</h3>
+        {% include 'user_post_list.html' with page_obj=page_obj profile=True %}
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
+

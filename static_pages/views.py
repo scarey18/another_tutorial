@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator
 from django.utils.crypto import get_random_string
 
 from .models import User
@@ -24,8 +25,13 @@ class UserProfile(LoginRequiredMixin, DetailView):
         return 'u'
 
     def get_context_data(self, **kwargs):
+        page_num = self.request.GET.get('page', 1)
+        posts = self.object.microposts()
+
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.object.username
+        context['page_obj'] = Paginator(posts, 3).page(page_num)
+        context['posts'] = posts
         return context
 
     def get_queryset(self):
