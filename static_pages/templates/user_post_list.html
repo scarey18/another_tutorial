@@ -23,9 +23,9 @@
                 {{ p.user.username }}
             </a>
         </span>
-        <span class="content">{{ p }}</span>
+        <span class="content">{{ p.content }}</span>
         {% load humanize %}
-        <span class="timestamp">Posted {{ p.created_at|naturaltime }} ago.</span>
+        <span class="timestamp">Posted {{ p.created_at|naturaltime }}.</span>
     </li>
     {% endfor %}   
 </ol>

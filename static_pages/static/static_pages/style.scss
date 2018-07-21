@@ -153,7 +153,7 @@ input {
 }
 
 .row {
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -222,6 +222,7 @@ alert-success {
   display: block;
   margin-left: 60px;
   margin-top: 10px;
+  overflow: auto;
 }
 
 .microposts .content img {

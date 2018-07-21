@@ -152,7 +152,13 @@ class PasswordResetConfirm(PasswordResetConfirmView):
 
 
 def home(request):
-    return render(request, 'static_pages/home.html', {'form': MicropostForm()})
+    page_num = request.GET.get('page', 1)
+    user = auth.get_user(request)
+    context = {
+        'form': MicropostForm(),
+        'page_obj': Paginator(user.microposts(), 10).page(page_num),
+    } if user.is_authenticated else None
+    return render(request, 'static_pages/home.html', context)
 
 def help(request):
     return render(request, 'static_pages/help.html', {'page_title': 'Help'})
