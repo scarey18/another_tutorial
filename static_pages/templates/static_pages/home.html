@@ -27,6 +27,7 @@
     </aside>
     {% if user.microposts %}
     <div class="col-md-8">
+        <h3>Micropost Feed</h3>
         {% include 'user_post_list.html' with page_obj=page_obj %}
     </div>
     {% endif %}

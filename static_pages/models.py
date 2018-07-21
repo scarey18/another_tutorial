@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import AbstractUser
+from django.core.paginator import Paginator
 
 import hashlib
 
@@ -29,6 +30,10 @@ class User(AbstractUser):
 
     def microposts(self):
         return self.micropost_set.all().order_by('-created_at')
+
+    def feed_page_obj(self, request):
+        page_num = request.GET.get('page', 1)
+        return Paginator(self.microposts(), 10).page(page_num)
 
 
 class Micropost(models.Model):

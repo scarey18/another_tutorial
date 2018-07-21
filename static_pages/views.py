@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
-from django.core.paginator import Paginator
 from django.utils.crypto import get_random_string
 
 from .models import User, Micropost
@@ -25,13 +24,9 @@ class UserProfile(LoginRequiredMixin, DetailView):
         return 'u'
 
     def get_context_data(self, **kwargs):
-        page_num = self.request.GET.get('page', 1)
-        posts = self.object.microposts()
-
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.object.username
-        context['page_obj'] = Paginator(posts, 10).page(page_num)
-        context['posts'] = posts
+        context['page_obj'] = self.object.feed_page_obj(self.request)
         return context
 
     def get_queryset(self):
@@ -152,11 +147,10 @@ class PasswordResetConfirm(PasswordResetConfirmView):
 
 
 def home(request):
-    page_num = request.GET.get('page', 1)
     user = auth.get_user(request)
     context = {
         'form': MicropostForm(),
-        'page_obj': Paginator(user.microposts(), 10).page(page_num),
+        'page_obj': user.feed_page_obj(request),
     } if user.is_authenticated else None
     return render(request, 'static_pages/home.html', context)
 
@@ -221,3 +215,10 @@ def create_micropost(request):
 
     else:
         raise Http404
+
+@login_required
+def delete_micropost(request, pk):
+    post = get_object_or_404(Micropost, pk=pk)
+    post.delete()
+    messages.success(request, "Post deleted.")
+    return HttpResponseRedirect(reverse_lazy('static_pages:home'))

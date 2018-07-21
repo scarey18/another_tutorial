@@ -14,8 +14,8 @@
     </aside>
     <div class="col-md-8">
 
-        {% if posts %}
-        <h3>Microposts ({{ posts.count }})</h3>
+        {% if u.microposts %}
+        <h3>Microposts ({{ u.microposts.count }})</h3>
         {% include 'user_post_list.html' with page_obj=page_obj %}
         
         {% else %}

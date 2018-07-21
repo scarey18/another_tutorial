@@ -23,4 +23,5 @@ urlpatterns = [
 	path('logout', views.logout, name='logout'),
 	path('activate', views.activate, name='activate'),
 	path('posts/create', views.create_micropost, name='create_micropost'),
+	path('posts/<int:pk>/delete', views.delete_micropost, name='delete_micropost'),
 ]
