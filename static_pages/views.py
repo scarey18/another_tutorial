@@ -11,8 +11,8 @@ from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.utils.crypto import get_random_string
 
-from .models import User
-from .forms import UserCreateForm, UserUpdateForm
+from .models import User, Micropost
+from .forms import UserCreateForm, UserUpdateForm, MicropostForm
 from .utils import active_users
 
 
@@ -30,7 +30,7 @@ class UserProfile(LoginRequiredMixin, DetailView):
 
         context = super().get_context_data(**kwargs)
         context['page_title'] = self.object.username
-        context['page_obj'] = Paginator(posts, 3).page(page_num)
+        context['page_obj'] = Paginator(posts, 10).page(page_num)
         context['posts'] = posts
         return context
 
@@ -152,7 +152,7 @@ class PasswordResetConfirm(PasswordResetConfirmView):
 
 
 def home(request):
-    return render(request, 'static_pages/home.html')
+    return render(request, 'static_pages/home.html', {'form': MicropostForm()})
 
 def help(request):
     return render(request, 'static_pages/help.html', {'page_title': 'Help'})
@@ -197,3 +197,21 @@ def activate(request):
 
     else:
         return render(request, 'static_pages/activate.html', {'page_title': 'Activate'})
+
+@login_required
+def create_micropost(request):
+    if request.method == 'POST':
+        form = MicropostForm(request.POST)
+
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            user = auth.get_user(request)
+            Micropost.objects.create(content=content, user=user)
+            messages.success(request, "Successfully posted!")
+        else:
+            messages.error(request, "Unable to post.")
+
+        return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+
+    else:
+        raise Http404

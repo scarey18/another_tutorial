@@ -12,9 +12,13 @@
         </section>
     </aside>
     <div class="col-md-8">
+
         {% if posts %}
         <h3>Microposts ({{ posts.count }})</h3>
-        {% include 'user_post_list.html' with page_obj=page_obj profile=True %}
+        {% include 'user_post_list.html' with page_obj=page_obj %}
+        
+        {% else %}
+        <h3>This user hasn't posted anything yet!</h3>
         {% endif %}
     </div>
 </div>

@@ -1,6 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info">
+      {{ user.index_gravatar }}
+      <h1>{{ user.username }}</h1>
+      <span>
+        <a href="{% url 'static_pages:profile' user.pk %}">View my profile</a>
+      </span>
+      <span>
+        {{ user.microposts.count }} micropost{{ user.microposts.count|pluralize }}
+      </span>
+    </section>
+    <section class="micropost_form">
+      <form method="post" action="{% url 'static_pages:create_micropost' %}">
+      {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Post</button>
+      </form>
+    </section>
+  </aside>
+</div>
+{% else %}
 <div class="center jumbotron">
   	<h1>Welcome to the Sample App</h1>
 
@@ -9,14 +33,13 @@
     	<a href="http://www.railstutorial.org/" target="_blank">Ruby on Rails Tutorial</a>
     	sample application.
   	</h2>
-
-  	{% if not user.is_authenticated %}
   	<a href="{% url 'static_pages:signup' %}" class="btn btn-lg btn-primary">Sign up now!</a>
-  	{% endif %}
 </div>
 
 <a href="https://www.djangoproject.com/" target="_blank">
 	{% load static %}
 	<img src="{% static 'static_pages/images/django.png' %}" alt="Django logo" id="django-logo">
 </a>
+{% endif %}
+
 {% endblock %}

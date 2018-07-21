@@ -23,7 +23,7 @@
                 {{ p.user.username }}
             </a>
         </span>
-        <span class="content">{{ p.content }}</span>
+        <span class="content">{{ p }}</span>
         {% load humanize %}
         <span class="timestamp">Posted {{ p.created_at|naturaltime }} ago.</span>
     </li>

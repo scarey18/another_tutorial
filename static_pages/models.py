@@ -16,7 +16,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def gravatar(self, size=60):
+    def gravatar(self, size=80):
         digest = hashlib.md5(self.email.encode()).hexdigest()
         url = f'http://www.gravatar.com/avatar/{digest}'
         return mark_safe(f'<img src="{url}" height="{size}" width="{size}" class="gravatar">')
@@ -39,9 +39,9 @@ class Micropost(models.Model):
 
     def __str__(self):
         content = self.content.split(' ')
-        abbrv = ' '.join(content[:5]) + '...' if len(content) > 5\
+        abbrv = ' '.join(content[:10]) + '...' if len(content) > 10\
             else ' '.join(content)
-        return abbrv if len(abbrv) < 40 else abbrv[:40]
+        return abbrv if len(abbrv) < 40 else abbrv[:40] + '...'
 
     def save(self, *args, **kwargs):
         if not self.pk:
