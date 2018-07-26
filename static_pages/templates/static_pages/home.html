@@ -18,7 +18,7 @@
             </p>
         </section>
         <section class="micropost_form">
-            <form method="post" action="{% url 'static_pages:create_micropost' %}">
+            <form method="post" action="{% url 'static_pages:create_micropost' %}" enctype="multipart/form-data">
             {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Post</button>

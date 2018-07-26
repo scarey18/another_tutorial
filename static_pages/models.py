@@ -8,6 +8,11 @@ from django.core.paginator import Paginator
 import hashlib
 
 
+
+def image_file_path(post, filename):
+    return f'micropost_pictures/user_{post.user.pk}/{filename}'
+
+
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
     activation_id = models.SlugField(null=True, blank=True, default=None)
@@ -41,6 +46,7 @@ class Micropost(models.Model):
     created_at = models.DateTimeField(editable=False)
     updated_at = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    picture = models.ImageField(upload_to=image_file_path, blank=True, null=True)
 
     def __str__(self):
         content = self.content.split(' ')

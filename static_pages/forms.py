@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Textarea
+from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -28,11 +28,11 @@ class UserUpdateForm(UserChangeForm):
         del self.fields['password']
 
 
-class MicropostForm(ModelForm):
+class MicropostForm(forms.ModelForm):
     class Meta:
         model = Micropost
-        fields = ['content']
-        labels = {'content': _('')}
+        fields = ['content', 'picture']
+        labels = {'content': _(''), 'picture': _('Add an image:')}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -12,7 +12,10 @@ from django.utils.crypto import get_random_string
 
 from .models import User, Micropost
 from .forms import UserCreateForm, UserUpdateForm, MicropostForm
-from .utils import active_users
+
+
+def active_users():
+    return User.objects.filter(is_active=True)
 
 
 class UserProfile(LoginRequiredMixin, DetailView):
@@ -130,7 +133,7 @@ class PasswordReset(PasswordResetView):
     subject_template_name = 'static_pages/password_reset_subject.txt'
 
 
-class PasswordResetDone(PasswordResetView):
+class PasswordResetDone(PasswordResetDoneView):
     template_name = 'static_pages/password_reset_done.html'
     extra_context = {'page_title': 'Email sent'}
 
@@ -193,7 +196,7 @@ def activate(request):
         user.activation_id = None
         user.save()
         messages.success(request, f"Your account has been successfully activated, {user.username}! Please log in to continue.")
-        return HttpResponseRedirect(reverse('static_pages:profile', args=(user.pk,)))
+        return HttpResponseRedirect(reverse_lazy('static_pages:login'))
 
     else:
         return render(request, 'static_pages/activate.html', {'page_title': 'Activate'})
@@ -201,12 +204,12 @@ def activate(request):
 @login_required
 def create_micropost(request):
     if request.method == 'POST':
-        form = MicropostForm(request.POST)
+        form = MicropostForm(request.POST, request.FILES)
 
         if form.is_valid():
-            content = form.cleaned_data['content']
-            user = auth.get_user(request)
-            Micropost.objects.create(content=content, user=user)
+            post = form.save(commit=False)
+            post.user = auth.get_user(request)
+            post.save()
             messages.success(request, "Successfully posted!")
         else:
             messages.error(request, "Unable to post.")
@@ -219,6 +222,10 @@ def create_micropost(request):
 @login_required
 def delete_micropost(request, pk):
     post = get_object_or_404(Micropost, pk=pk)
+
+    if post.user != auth.get_user(request):
+        raise Http404
+
     post.delete()
     messages.success(request, "Post deleted.")
-    return HttpResponseRedirect(reverse_lazy('static_pages:home'))
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])

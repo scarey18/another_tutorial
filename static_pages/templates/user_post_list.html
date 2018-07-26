@@ -24,6 +24,13 @@
             </a>
         </span>
         <span class="content">{{ p.content }}</span>
+
+        {% if p.picture %}
+        <a href="{{ p.picture.url }}">
+            <img src="{{ p.picture.url }}" width=100>
+        </a>
+        {% endif %}
+
         {% load humanize %}
         <span class="timestamp">
             Posted {{ p.created_at|naturaltime }}.
