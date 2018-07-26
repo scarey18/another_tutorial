@@ -22,16 +22,18 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def get_absolute_url(self):
+        return reverse('static_pages:profile', args=(self.pk,))
+
     def gravatar(self, size=80):
         digest = hashlib.md5(self.email.encode()).hexdigest()
         url = f'http://www.gravatar.com/avatar/{digest}'
-        return mark_safe(f'<img src="{url}" height="{size}" width="{size}" class="gravatar">')
+        img_tag = f'<img src="{url}" height="{size}" width="{size}" class="gravatar">'
+        wrapped_img_tag = f'<a href="{self.get_absolute_url()}">{img_tag}</a>'
+        return mark_safe(wrapped_img_tag)
 
     def index_gravatar(self):
         return self.gravatar(50)
-
-    def get_absolute_url(self):
-        return reverse('static_pages:profile', args=(self.pk,))
 
     def microposts(self):
         return self.micropost_set.all().order_by('-created_at')
@@ -59,3 +61,6 @@ class Micropost(models.Model):
             self.created_at = timezone.now()
         self.updated_at = timezone.now()
         return super().save(*args, **kwargs)
+
+    def resized_pic_width(self):
+        return 400 if self.picture.width >= 400 else self.picture.width

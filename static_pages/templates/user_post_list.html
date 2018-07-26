@@ -27,7 +27,7 @@
 
         {% if p.picture %}
         <a href="{{ p.picture.url }}">
-            <img src="{{ p.picture.url }}" width=100>
+            <img src="{{ p.picture.url }}" width={{ p.resized_pic_width }}>
         </a>
         {% endif %}
 
