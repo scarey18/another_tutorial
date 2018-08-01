@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+	<aside class="col-md-4">
+		<section class="user_info">
+			{{ u.gravatar }}
+			<h1>{{ u.username }}</h1>
+			<span>
+				<a href="{% url 'static_pages:profile' u.pk %}">view my profile</a>
+			</span>
+			<span><b>Microposts: </b>{{ u.microposts.count }}</span>
+		</section>
+		<section class="stats">
+			{% include 'partials/following_stats.html' with u=u %}
+			
+			<div class="user_avatars">
+				{% for f in u.following.all %}
+				{{ f.following_gravatar }}
+				{% endfor %}
+			</div>
+		</section>
+	</aside>
+	<div class="col-md-8">
+		<h3>Following</h3>
+		{% include 'partials/user_list.html' with page_obj=page_obj user_list=user_list %}
+	</div>
+</div>
+{% endblock %}

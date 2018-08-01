@@ -1,0 +1,16 @@
+{% if user != u %}
+<div id="follow_form">
+	{% if u in user.following.all %}
+	<form method="post" action="{% url 'static_pages:unfollow' u.pk %}">
+	{% csrf_token %}
+		<button type="submit" class="btn">Unfollow</button>
+
+	{% else %}
+	<form method="post" action="{% url 'static_pages:follow' u.pk %}">
+	{% csrf_token %}
+		<button type="submit" class="btn btn-primary">Follow</button>
+
+	{% endif %}
+	</form>
+</div>
+{% endif %}

@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator
 from django.utils.crypto import get_random_string
 
 from .models import User, Micropost
@@ -153,9 +154,11 @@ def home(request):
     user = auth.get_user(request)
 
     if user.is_authenticated:
+        page_num = request.GET.get('page', 1)
+        page_obj = Paginator(user.microposts(), 10).page(page_num)
         context = {
             'form': MicropostForm(),
-            'page_obj': user.feed_page_obj(request),
+            'page_obj': page_obj,
         }
         return render(request, 'static_pages/logged_in_home.html', context)
     
@@ -233,3 +236,29 @@ def delete_micropost(request, pk):
     post.delete()
     messages.success(request, "Post deleted.")
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+@login_required
+def follow(request, pk):
+    u = get_object_or_404(User, pk=pk)
+    auth.get_user(request).following.add(u)
+    return HttpResponseRedirect(u.get_absolute_url())
+
+@login_required
+def unfollow(request, pk):
+    u = get_object_or_404(User, pk=pk)
+    auth.get_user(request).following.remove(u)
+    return HttpResponseRedirect(u.get_absolute_url())
+
+@login_required
+def following(request, pk):
+    u = get_object_or_404(User, pk=pk)
+    user_list = u.following.all()
+    page_num = request.GET.get('page', 1)
+    page_obj = Paginator(user_list, 10).page(page_num)
+    context = {
+        'page_title': 'Following',
+        'u': u,
+        'page_obj': page_obj,
+        'user_list': user_list
+    }
+    return render(request, 'static_pages/show_follow.html', context)

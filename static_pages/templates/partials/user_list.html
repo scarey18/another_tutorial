@@ -1,0 +1,27 @@
+<ul class="users">
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% for u in user_list %}
+    <li>
+        {{ u.index_gravatar }}
+        <a href="{% url 'static_pages:profile' u.pk %}">{{ u.username }}</a>
+        {% if user.is_superuser %}
+        | <a href="{% url 'static_pages:deactivate' u.pk %}">Deactivate</a>
+        {% endif %}
+    </li>
+    {% endfor %}   
+</ul>

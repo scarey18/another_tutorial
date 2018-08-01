@@ -16,9 +16,15 @@
         </section>
     </aside>
     <div class="col-md-8">
+        {% if user.is_authenticated %}
+
+        {% include 'partials/follow_btn.html' with u=u %}
+
+        {% endif %}
 
         {% if u.microposts %}
         <h3>Microposts ({{ u.microposts.count }})</h3>
+        
         {% include 'partials/user_post_list.html' with page_obj=page_obj %}
         
         {% else %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <aside class="col-md-4">
+        <section class="user_info">
+            <h1>
+                {{ user.gravatar }}
+                {{ user.username }}
+            </h1>
+            <span>
+                <a href="{% url 'static_pages:profile' user.pk %}">View my profile</a>
+            </span>
+            <p>
+                {{ user.microposts.count }} micropost{{ user.microposts.count|pluralize }}
+            </p>
+        </section>
+
+        {% include 'partials/following_stats.html' with u=user %}
+
+        <section class="micropost_form">
+            <form method="post" action="{% url 'static_pages:create_micropost' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+        </section>
+    </aside>
+    
+    {% if user.microposts %}
+    <div class="col-md-8">
+        <h3>Micropost Feed</h3>
+        {% include 'partials/user_post_list.html' with page_obj=page_obj %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
