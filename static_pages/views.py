@@ -18,6 +18,10 @@ from .forms import UserCreateForm, UserUpdateForm, MicropostForm
 def active_users():
     return User.objects.filter(is_active=True)
 
+def get_page_obj(request, objects, n=10):
+    page_num = request.GET.get('page', 1)
+    return Paginator(objects, n).page(page_num)
+
 
 class UserProfile(LoginRequiredMixin, DetailView):
     model = User
@@ -29,8 +33,9 @@ class UserProfile(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = self.object.username
-        context['page_obj'] = self.object.feed_page_obj(self.request)
+        user = self.object
+        context['page_title'] = user.username
+        context['page_obj'] = get_page_obj(self.request, user.microposts())
         return context
 
     def get_queryset(self):
@@ -154,11 +159,9 @@ def home(request):
     user = auth.get_user(request)
 
     if user.is_authenticated:
-        page_num = request.GET.get('page', 1)
-        page_obj = Paginator(user.microposts(), 10).page(page_num)
         context = {
             'form': MicropostForm(),
-            'page_obj': page_obj,
+            'page_obj': get_page_obj(request, user.microposts()),
         }
         return render(request, 'static_pages/logged_in_home.html', context)
     
@@ -253,10 +256,22 @@ def unfollow(request, pk):
 def following(request, pk):
     u = get_object_or_404(User, pk=pk)
     user_list = u.following.all()
-    page_num = request.GET.get('page', 1)
-    page_obj = Paginator(user_list, 10).page(page_num)
+    page_obj = get_page_obj(request, user_list)
     context = {
         'page_title': 'Following',
+        'u': u,
+        'page_obj': page_obj,
+        'user_list': user_list
+    }
+    return render(request, 'static_pages/show_follow.html', context)
+
+@login_required
+def followers(request, pk):
+    u = get_object_or_404(User, pk=pk)
+    user_list = u.followers.all()
+    page_obj = get_page_obj(request, user_list)
+    context = {
+        'page_title': 'Followers',
         'u': u,
         'page_obj': page_obj,
         'user_list': user_list

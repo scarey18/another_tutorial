@@ -19,6 +19,7 @@ urlpatterns = [
 	path('users/<int:pk>/follow', views.follow, name='follow'),
 	path('users/<int:pk>/unfollow', views.unfollow, name='unfollow'),
 	path('users/<int:pk>/following', views.following, name='following'),
+	path('users/<int:pk>/followers', views.followers, name='followers'),
 	path('users/password_reset', views.PasswordReset.as_view(), name='password_reset'),
 	path('users/password_reset/done', views.PasswordResetDone.as_view(), name='password_reset_done'),
 	path('users/password_reset/confirm/<slug:uidb64>/<slug:token>', views.PasswordResetConfirm.as_view(), name='password_reset_confirm'),

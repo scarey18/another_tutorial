@@ -5,7 +5,7 @@
 		</strong>
 		following
 	</a>
-	<a href="#">
+	<a href="{% url 'static_pages:followers' u.pk %}">
 		<strong id="followers" class="stat">
 			{{ u.followers.count }}
 		</strong>
