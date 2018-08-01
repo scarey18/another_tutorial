@@ -1,4 +1,6 @@
 $gray-medium-light: #eaeaea;
+$gray-light: lighten(#000, 60%) !default;
+$gray-lighter: lighten(#000, 93.5%) !default;
 
 section {
   overflow: auto;
@@ -139,13 +141,50 @@ aside {
   margin-top: 15px;
 }
 
+.stats {
+  overflow: auto;
+  margin-top: 0;
+  padding: 0;
+  a {
+    float: left;
+    padding: 0 10px;
+    border-left: 1px solid $gray-lighter;
+    color: gray;
+    &:first-child {
+      padding-left: 0;
+      border: 0;
+    }
+    &:hover {
+      text-decoration: none;
+      color: blue;
+    }
+  }
+  strong {
+    display: block;
+  }
+}
+
+.user_avatars {
+  overflow: auto;
+  margin-top: 10px;
+  .gravatar {
+    margin: 1px 1px;
+  }
+  a {
+    padding: 0;
+  }
+}
+
+.users.follow {
+  padding: 0;
+}
+
 /* forms */
 
 input, textarea, select, .uneditable-input {
   border: 1px solid #bbb;
   width: 100%;
   margin-bottom: 15px;
-  @include box_sizing;
 }
 
 input {
@@ -232,7 +271,7 @@ alert-success {
 
 .microposts .timestamp {
   color: gray;
-  diplay: block;
+  display: block;
   margin-left: 60px;
 }
 

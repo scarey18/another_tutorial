@@ -8,6 +8,9 @@
                 {{ u.gravatar }}
                 {{ u.username }}
             </h1>
+            <br><br><br>
+            {% include 'partials/following_stats.html' with u=u %}
+            <br>
             <p>Date joined: {{ u.date_joined }}</p>
             <p>Last login: {{ u.last_login }}</p>
         </section>
@@ -16,7 +19,7 @@
 
         {% if u.microposts %}
         <h3>Microposts ({{ u.microposts.count }})</h3>
-        {% include 'user_post_list.html' with page_obj=page_obj %}
+        {% include 'partials/user_post_list.html' with page_obj=page_obj %}
         
         {% else %}
         <h3>This user hasn't posted anything yet!</h3>

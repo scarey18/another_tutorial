@@ -9,13 +9,16 @@ import hashlib
 
 
 
-def image_file_path(post, filename):
-    return f'micropost_pictures/user_{post.user.pk}/{filename}'
-
-
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
     activation_id = models.SlugField(null=True, blank=True, default=None)
+    following = models.ManyToManyField(
+                    'self',
+                    symmetrical=False,
+                    related_name='followers',
+                    blank=True,
+                    default=None
+                )
 
     REQUIRED_FIELDS = ['email']
 
@@ -43,6 +46,9 @@ class User(AbstractUser):
         return Paginator(self.microposts(), 10).page(page_num)
 
 
+def image_file_path(post, filename):
+    return f'micropost_pictures/user_{post.user.pk}/{filename}'
+
 class Micropost(models.Model):
     content = models.TextField(max_length=140)
     created_at = models.DateTimeField(editable=False)
@@ -62,5 +68,5 @@ class Micropost(models.Model):
         self.updated_at = timezone.now()
         return super().save(*args, **kwargs)
 
-    def resized_pic_width(self):
-        return 400 if self.picture.width >= 400 else self.picture.width
+    def resized_pic_width(self, size=400):
+        return size if self.picture.width >= size else self.picture.width
