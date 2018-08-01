@@ -258,20 +258,21 @@ def unfollow(request, pk):
 
 @login_required
 def following(request, pk):
-    u = get_object_or_404(User, pk=pk)
-    return show_follow(request, u, u.active_following())
+    user = get_object_or_404(User, pk=pk)
+    return show_follow(request, 'Following', user)
 
 @login_required
 def followers(request, pk):
-    u = get_object_or_404(User, pk=pk)
-    return show_follow(request, u, u.active_followers())
+    user = get_object_or_404(User, pk=pk)
+    return show_follow(request, 'Followers', user)
 
-def show_follow(request, u, user_list):
-    page_obj = get_page_obj(request, user_list)
+def show_follow(request, title, user):
+    user_list = user.active_following() if title == 'Following'\
+                    else user.active_followers()
     context = {
-        'page_title': 'Following',
-        'u': u,
-        'page_obj': page_obj,
+        'page_title': title,
+        'u': user,
+        'page_obj': get_page_obj(request, user_list),
         'user_list': user_list
     }
     return render(request, 'static_pages/show_follow.html', context)
