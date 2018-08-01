@@ -1,13 +1,13 @@
 <div class="stats">
 	<a href="{% url 'static_pages:following' u.pk %}">
 		<strong id="following" class="stat">
-			{{ u.following.count }}
+			{{ u.active_following.count }}
 		</strong>
 		following
 	</a>
 	<a href="{% url 'static_pages:followers' u.pk %}">
 		<strong id="followers" class="stat">
-			{{ u.followers.count }}
+			{{ u.active_followers.count }}
 		</strong>
 		followers
 	</a>

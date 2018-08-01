@@ -7,7 +7,7 @@
 			{{ u.gravatar }}
 			<h1>{{ u.username }}</h1>
 			<span>
-				<a href="{% url 'static_pages:profile' u.pk %}">view my profile</a>
+				<a href="{% url 'static_pages:profile' u.pk %}">View my profile</a>
 			</span>
 			<span><b>Microposts: </b>{{ u.microposts.count }}</span>
 		</section>
@@ -15,7 +15,7 @@
 			{% include 'partials/following_stats.html' with u=u %}
 			
 			<div class="user_avatars">
-				{% for f in u.following.all %}
+				{% for f in user_list %}
 				{{ f.following_gravatar }}
 				{% endfor %}
 			</div>

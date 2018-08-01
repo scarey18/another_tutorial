@@ -11,9 +11,7 @@
             <span>
                 <a href="{% url 'static_pages:profile' user.pk %}">View my profile</a>
             </span>
-            <p>
-                {{ user.microposts.count }} micropost{{ user.microposts.count|pluralize }}
-            </p>
+            <span><b>Microposts: </b>{{ user.microposts.count }}</span>
         </section>
 
         {% include 'partials/following_stats.html' with u=user %}

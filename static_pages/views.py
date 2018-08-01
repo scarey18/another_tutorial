@@ -15,6 +15,8 @@ from .models import User, Micropost
 from .forms import UserCreateForm, UserUpdateForm, MicropostForm
 
 
+#### Helper functions ####
+
 def active_users():
     return User.objects.filter(is_active=True)
 
@@ -22,6 +24,8 @@ def get_page_obj(request, objects, n=10):
     page_num = request.GET.get('page', 1)
     return Paginator(objects, n).page(page_num)
 
+
+#### Views ####
 
 class UserProfile(LoginRequiredMixin, DetailView):
     model = User
@@ -255,23 +259,17 @@ def unfollow(request, pk):
 @login_required
 def following(request, pk):
     u = get_object_or_404(User, pk=pk)
-    user_list = u.following.all()
-    page_obj = get_page_obj(request, user_list)
-    context = {
-        'page_title': 'Following',
-        'u': u,
-        'page_obj': page_obj,
-        'user_list': user_list
-    }
-    return render(request, 'static_pages/show_follow.html', context)
+    return show_follow(request, u, u.active_following())
 
 @login_required
 def followers(request, pk):
     u = get_object_or_404(User, pk=pk)
-    user_list = u.followers.all()
+    return show_follow(request, u, u.active_followers())
+
+def show_follow(request, u, user_list):
     page_obj = get_page_obj(request, user_list)
     context = {
-        'page_title': 'Followers',
+        'page_title': 'Following',
         'u': u,
         'page_obj': page_obj,
         'user_list': user_list

@@ -43,6 +43,12 @@ class User(AbstractUser):
     def microposts(self):
         return self.micropost_set.all().order_by('-created_at')
 
+    def active_following(self):
+        return self.following.filter(is_active=True)
+
+    def active_followers(self):
+        return self.followers.filter(is_active=True)
+
 
 def image_file_path(post, filename):
     return f'micropost_pictures/user_{post.user.pk}/{filename}'
