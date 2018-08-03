@@ -15,7 +15,7 @@
         </span>
     </div>
 
-    {% for u in user_list %}
+    {% for u in page_obj.object_list %}
     <li>
         {{ u.index_gravatar }}
         <a href="{% url 'static_pages:profile' u.pk %}">{{ u.username }}</a>
