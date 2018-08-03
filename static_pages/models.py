@@ -49,6 +49,12 @@ class User(AbstractUser):
     def active_followers(self):
         return self.followers.filter(is_active=True)
 
+    def feed(self):
+        return Micropost.objects.filter(
+            models.Q(user__in=self.active_following()) |
+            models.Q(user=self)
+        ).order_by('-created_at')
+
 
 def image_file_path(post, filename):
     return f'micropost_pictures/user_{post.user.pk}/{filename}'

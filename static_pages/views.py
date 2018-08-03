@@ -165,7 +165,7 @@ def home(request):
     if user.is_authenticated:
         context = {
             'form': MicropostForm(),
-            'page_obj': get_page_obj(request, user.microposts()),
+            'page_obj': get_page_obj(request, user.feed()),
         }
         return render(request, 'static_pages/logged_in_home.html', context)
     
